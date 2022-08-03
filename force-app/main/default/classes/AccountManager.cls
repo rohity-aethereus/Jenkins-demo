@@ -6,6 +6,9 @@ global with sharing class AccountManager {
         String accId = req.requestURI.substringBetween('Accounts/', '/contacts');
         Account acc = [SELECT Id, Name, (Select Id, Name from Contacts) from Account where Id= :accId];
         return acc;
-        
+    }
+
+    public static Integer getInteger() {
+        reutrn 2;
     }
 }
