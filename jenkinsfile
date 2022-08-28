@@ -1,0 +1,29 @@
+pipeline {
+    agent any 
+        stages {
+            stage ('Git Checkout') {
+                steps {
+                    git changelog: false, credentialsId: '393ff95d-6d40-44f8-96a9-3756669d4a2d', poll: false, url: 'https://github.com/rohity-aethereus/Jenkins-demo'
+                
+                }
+            }
+            
+            stage ('Generate package.xml') {
+                steps {
+                    bat 'sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output "."'
+                }
+            }
+
+            stage ('SF Authorize') {
+                steps {
+                    bat 'sfdx auth:jwt:grant --clientid 3MVG9d8..z.hDcPI8OKxhoHH1XIWYXqoxgJQL9UBh_xMNFjIMrNOV2pMEeB_l57KdlrM98DJEHkZoDmSzz_RD --jwtkeyfile C:\\Data\\jenkins_home\\sf_server.key --username rohit.h.yadav@accn.com --instanceurl https://roh777-dev-ed.my.salesforce.com --setdefaultusername'
+                }
+            }
+            
+            stage("Push Changes to SF Org") {
+                steps {
+                    bat 'sfdx force:source:deploy -x package/package.xml'
+                }  
+            }
+        }
+}
